@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="📚 座位预约助手"
+            android:textColor="@color/accent_gold"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="甘肃政法大学 · 图书馆自动预约"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 配置卡片 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="14dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="学号"
+                android:textColorHint="@color/text_secondary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="@color/input_text"
+                    android:backgroundTint="@color/accent_gold"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="密码（明文，自动加密后发送）"
+                android:textColorHint="@color/text_secondary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:textColor="@color/input_text"
+                    android:backgroundTint="@color/accent_gold"
+                    android:textSize="16sp" />
+            </org.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="阅览室号"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:paddingStart="4dp"/>
+                    <EditText
+                        android:id="@+id/et_room"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:background="@drawable/input_bg"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/input_text"
+                        android:textSize="15sp"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="座位号"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:paddingStart="4dp"/>
+                    <EditText
+                        android:id="@+id/et_seat"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:background="@drawable/input_bg"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/input_text"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 定时任务卡片 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="14dp"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⏰ 自动定时预约（每天到点自动抢号）"
+                android:textColor="@color/accent_gold"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp" />
+
+            <!-- 上午场 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+                <CheckBox
+                    android:id="@+id/sw_morning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌅 上午场"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="触发时间 "
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/et_morning_time"
+                    android:layout_width="86dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/input_bg"
+                    android:gravity="center"
+                    android:textColor="@color/input_text"
+                    android:text="07:59"
+                    android:inputType="time"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- 下午场 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <CheckBox
+                    android:id="@+id/sw_afternoon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌆 下午场"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="触发时间 "
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/et_afternoon_time"
+                    android:layout_width="86dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/input_bg"
+                    android:gravity="center"
+                    android:textColor="@color/input_text"
+                    android:text="16:59"
+                    android:inputType="time"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/tv_next_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:text="自动计划：待保存…" />
+            <TextView
+                android:id="@+id/tv_now"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp"
+                android:text="当前手机时间：--" />
+            <TextView
+                android:id="@+id/tv_last_morning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="6dp"
+                tools:text="上午最近结果：未执行" />
+            <TextView
+                android:id="@+id/tv_last_afternoon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="2dp"
+                tools:text="下午最近结果：未执行" />
+        </LinearLayout>
+
+        <!-- 按钮行：保存 + 权限 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="14dp"
+            android:baselineAligned="false">
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:backgroundTint="@color/btn_primary"
+                android:text="💾 保存并启动"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_permission"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:backgroundTint="#80479B"
+                android:text="🔐 权限配置"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_reschedule"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#283563"
+            android:text="🔄 重新设置闹钟"
+            android:textColor="@color/white" />
+
+        <!-- 手动预约 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:baselineAligned="false">
+            <Button
+                android:id="@+id/btn_book_morning"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:backgroundTint="@color/accent_morning"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="🌅 立即预约\n(上午场)" />
+            <Button
+                android:id="@+id/btn_book_afternoon"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:backgroundTint="@color/accent_afternoon"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="🌆 立即预约\n(下午场)" />
+        </LinearLayout>
+
+        <!-- 日志 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="12dp"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="📜 运行日志"
+                    android:textColor="@color/accent_gold"
+                    android:textStyle="bold"
+                    android:textSize="15sp" />
+                <Button
+                    android:id="@+id/btn_clear_log"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:backgroundTint="@color/btn_danger"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:text="清空" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scroll_logs"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/input_bg"
+                android:fillViewport="true">
+                <TextView
+                    android:id="@+id/tv_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="11.5sp"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="monospace"
+                    android:text="还没有日志。" />
+            </ScrollView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="80dp"
+            android:textSize="11sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center"
+            android:text="📱 国产ROM请务必授权：自启动、忽略电池优化、精确闹钟\n并在最近任务里锁定本APP（小锁头）" />
+    </LinearLayout>
+</ScrollView>

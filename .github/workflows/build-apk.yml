@@ -1,0 +1,151 @@
+name: Build SeatBooking APK (Android Gradle)
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: false
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+jobs:
+  build-apk:
+    name: Assemble Android APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 11076708
+          packages: >
+            platform-tools
+            platforms;android-34
+            build-tools;34.0.0
+
+      - name: Create Gradle wrapper (gradlew) files if missing
+        run: |
+          chmod +x gradlew 2>/dev/null || true
+          if [ ! -f gradlew ]; then
+            echo "⚠️ gradlew 不存在，使用本机 gradle wrapper 初始化"
+            # 通过下载 gradle-wrapper.jar + 生成 gradlew 脚本
+            mkdir -p gradle/wrapper
+            curl -sSL -o gradle/wrapper/gradle-wrapper.jar \
+              https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar || true
+            # 手写 gradlew
+            cat > gradlew <<'GRADLEW_SH'
+          #!/bin/sh
+          #
+          # 简易 gradlew fallback（调用系统gradle或从wrapper属性下载）
+          DIR="$( cd "$( dirname "$0" )" && pwd )"
+          JAR="$DIR/gradle/wrapper/gradle-wrapper.jar"
+          if [ -f "$JAR" ]; then
+            java -Xmx2048m -classpath "$JAR" org.gradle.wrapper.GradleWrapperMain "$@"
+          else
+            gradle "$@"
+          fi
+          GRADLEW_SH
+            chmod +x gradlew
+            echo "#!/bin/sh" > gradlew.bat
+            echo "@echo off" >> gradlew.bat
+            echo "java -Xmx2048m -classpath gradle\\wrapper\\gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain %*" >> gradlew.bat
+            echo "✅ Gradle wrapper 已创建"
+          fi
+
+          # 如果 wrapper jar 缺失，下载一份
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "⬇️ 正在下载 gradle-wrapper.jar"
+            curl -sSL -o gradle/wrapper/gradle-wrapper.jar \
+              https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar
+          fi
+          ls -la gradlew gradle/wrapper/
+
+      - name: Configure Gradle mirrors (阿里云 + Tencent)
+        run: |
+          mkdir -p ~/.gradle
+          cat > ~/.gradle/init.gradle <<'GRADLE_EOF'
+          allprojects {
+              buildscript {
+                  repositories {
+                      mavenLocal()
+                      maven { url 'https://maven.aliyun.com/repository/google' }
+                      maven { url 'https://maven.aliyun.com/repository/public' }
+                      maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+                      google()
+                      mavenCentral()
+                  }
+              }
+              repositories {
+                  mavenLocal()
+                  maven { url 'https://maven.aliyun.com/repository/google' }
+                  maven { url 'https://maven.aliyun.com/repository/public' }
+                  google()
+                  mavenCentral()
+              }
+          }
+          GRADLE_EOF
+          cat ~/.gradle/init.gradle
+          echo "✅ Gradle 镜像已配置"
+
+      - name: Grant exec permission and build APK
+        run: |
+          chmod +x gradlew
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          BUILD_VARIANT="${{ github.event.inputs.build_type }}"
+          if [ -z "$BUILD_VARIANT" ]; then BUILD_VARIANT="debug"; fi
+          TASK="assemble$(echo $BUILD_VARIANT | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
+          echo "执行任务: $TASK"
+          ./gradlew --no-daemon -q --warning-mode=none $TASK 2>&1 | tail -n 200
+
+      - name: Find produced APK
+        id: find-apk
+        run: |
+          APK=$(find app/build/outputs/apk -name "*.apk" -type f | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "❌ 未找到APK，列出输出目录："
+            find app/build/outputs -type f 2>/dev/null | head -n 50
+            exit 1
+          fi
+          SIZE=$(stat -c%s "$APK")
+          echo "APK: $APK ($((SIZE/1024)) KB)"
+          echo "APK_PATH=$APK" >> $GITHUB_ENV
+          echo "APK_NAME=$(basename $APK)" >> $GITHUB_ENV
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APK_NAME }}
+          path: ${{ env.APK_PATH }}
+          retention-days: 90
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: app/build/reports/
+          retention-days: 30

@@ -1,0 +1,41 @@
+# Buildozer 产物
+.buildozer/
+bin/
+*.apk
+*.aab
+build.log
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 配置备份
+buildozer.spec.bak
+*.ini.bak
+
+# 排除无关的媒体/游戏文件（不属于座位预约APP）
+*.mp3
+*.html
+*.zip
+*.wav
+Untitled-*
